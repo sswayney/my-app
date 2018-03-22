@@ -1,19 +1,11 @@
-<!--The word uppercase in the interpolation binding, right after the pipe operator ( | ), activates the built-in UppercasePipe.-->
-<div *ngIf="selectedHero">
-  <h2>{{ selectedHero.name | uppercase }} Details</h2>
-  <div><span>id: </span>{{selectedHero.id}}</div>
-  <div>
-    <label>name:
-      <!--[(ngModel)] is Angular's two-way data binding syntax.-->
-      <input [(ngModel)]="selectedHero.name" placeholder="name">
-    </label>
-  </div>
-</div>
-
 <h2>My Heroes</h2>
+
 <ul class="heroes">
-  <!--* directive () events [] class-->
+  <!--* directive  () event binding  [] property binding-->
   <li *ngFor="let hero of heroes" (click)="onSelect(hero)" [class.selected]="hero === selectedHero">
     <span class="badge">{{hero.id}}</span> {{hero.name}}
   </li>
 </ul>
+
+<!--In hero detail The hero property must be an Input property, annotated with the @Input() decorator, because the external HeroesComponent will bind to it like this.-->
+<app-hero-detail [hero]="selectedHero"></app-hero-detail>
