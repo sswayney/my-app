@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Hero } from '../hero';
-import { HEROES } from '../mock-heroes'
+import { HeroService } from "../hero.service";
+
 
 //You always import the Component symbol from the Angular core library and annotate the component class with @Component.
 //@Component is a decorator function that specifies the Angular metadata for the component.
@@ -14,16 +15,29 @@ import { HEROES } from '../mock-heroes'
 export class HeroesComponent implements OnInit {
   //Always export the component class so you can import it elsewhere ... like in the AppModule.
 
-  heroes = HEROES;
+  heroes: Hero[];
   selectedHero: Hero;
 
-  constructor() { }
+  // Sweet Sweet Injection happens in the constructor
+  // Add a private heroService parameter of type HeroService to the constructor.
+  // The parameter simultaneously defines a private heroService property and identifies it as a HeroService injection site.
+  constructor(private heroService: HeroService) {
+    // Reserve the constructor for simple initialization such as wiring constructor parameters to properties.
+    // The constructor shouldn't do anything. It certainly shouldn't call a function that makes HTTP requests to a remote server as a real data service would.
+  }
 
   //The ngOnInit is a lifecycle hook Angular calls ngOnInit shortly after creating a component. It's a good place to put initialization logic.
   ngOnInit() {
+    // While you could call getHeroes() in the constructor, that's not the best practice.
+    // let Angular call ngOnInit at an appropriate time after constructing a HeroesComponent instance.
+    this.getHeroes();
   }
 
   onSelect(hero: Hero): void {
     this.selectedHero = hero;
+  }
+
+  getHeroes(): void {
+    this.heroes = this.heroService.getHeroes();
   }
 }
