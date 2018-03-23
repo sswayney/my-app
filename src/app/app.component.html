@@ -1,4 +1,16 @@
 <h1>{{title}}</h1>
+
+<nav>
+  <a routerLink="/heroes">Heroes</a>
+</nav>
+
 <!--Remember that app-heroes is the element selector for the HeroesComponent.-->
-<app-heroes></app-heroes>
+<!--<app-heroes></app-heroes>
+You removed <app-heroes> because you will only display the HeroesComponent when the user
+navigates to it using router-outlet -->
+
+<!--The <router-outlet> tells the router where to display routed views.-->
+<router-outlet></router-outlet>
+<!--The RouterOutlet is one of the router directives that became available to the AppComponent because AppModule imports AppRoutingModule which exported RouterModule.-->
+
 <app-messages></app-messages>
