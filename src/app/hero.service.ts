@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';// Notice that the new service imports the Angular Injectable symbol and annotates the class with the @Injectable() decorator.
-import { HttpClient } from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 
 import { Observable } from "rxjs/Observable";
 import { of } from "rxjs/observable/of";
@@ -9,7 +9,13 @@ import { MessageService } from "./message.service";
 
 import { Hero } from "./hero";
 
-
+/**
+ * The heroes web API expects a special header in HTTP save requests. That header is in the httpOptions constant defined in the HeroService.
+ * @type {{headers: HttpHeaders}}
+ */
+const httpOptions = {
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+};
 
 
 // The @Injectable() decorator tells Angular that this service might itself have injected dependencies.
@@ -76,4 +82,37 @@ export class HeroService {
     };
   }
 
+  /** PUT: update the hero on the server */
+  updateHero (hero: Hero): Observable<any> {
+    return this.http.put(this.heroesUrl, hero, httpOptions).pipe(
+      tap(_ => this.log(`updated hero id=${hero.id}`)),
+      catchError(this.handleError<any>('updateHero'))
+    );
+  }
+
+  /** POST: add a new hero to the server */
+  addHero (hero: Hero): Observable<Hero> {
+    return this.http.post<Hero>(this.heroesUrl, hero, httpOptions).pipe(
+      tap((hero: Hero) => this.log(`added hero w/ id=${hero.id}`)),
+      catchError(this.handleError<Hero>('addHero'))
+    );
+  }
+
+  /**
+   * Interesting. The | is an or pram. then the body of the function checks what type the param is. Cool!
+   * Super helpful, ive had cases in the passed where I just passed the id and later I wiched it was the whole object
+   * this way you have both.
+   * @param {Hero | number} hero
+   * @returns {Observable<Hero>}
+   */
+  deleteHero (hero: Hero | number): Observable<Hero> {
+    // If the passed in hero is a number then leave it, if its a Hero then get its id.
+    const id = typeof hero === 'number' ? hero : hero.id;
+    const url = `${this.heroesUrl}/${id}`;
+
+    return this.http.delete<Hero>(url, httpOptions).pipe(
+      tap(_ => this.log(`deleted hero id=${id}`)),
+      catchError(this.handleError<Hero>('deleteHero'))
+    );
+  }
 }
