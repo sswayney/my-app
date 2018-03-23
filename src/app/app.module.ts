@@ -14,6 +14,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import {HttpClientInMemoryWebApiModule} from "angular-in-memory-web-api";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {InMemoryDataService} from "./in-memory-data-service.service";
+import { HeroSearchComponent } from './hero-search/hero-search.component';
 
 // Angular needs to know how the pieces of your application fit together and what other files and libraries the app requires. This information is called metadata
 // Some of the metadata is in the @Component decorators that you added to your component classes. Other critical metadata is in @NgModule decorators.
@@ -24,7 +25,8 @@ import {InMemoryDataService} from "./in-memory-data-service.service";
     HeroesComponent,
     HeroDetailComponent,
     MessagesComponent,
-    DashboardComponent
+    DashboardComponent,
+    HeroSearchComponent
   ],
   imports: [
     BrowserModule,

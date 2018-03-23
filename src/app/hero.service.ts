@@ -55,33 +55,6 @@ export class HeroService {
     );
   }
 
-  /** Log a HeroService message with the MessageService */
-  private log(message: string): void {
-    this.messageService.add('HeroService: ' + message);
-  }
-
-  /**
-   * Handle Http operation that failed.
-   * Let the app continue.
-   * @param operation - name of the operation that failed, hmm.. looks like we can have default param values
-   * @param result - optional value to return as the observable result
-   */
-  private handleError<T> (operation = 'operation', result?: T) {
-    // Because each service method returns a different kind of Observable result, errorHandler() takes a type parameter
-    // so it can return the safe value as the type that the app expects.
-    return (error: any): Observable<T> => {
-
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for user consumption
-      this.log(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
-  }
-
   /** PUT: update the hero on the server */
   updateHero (hero: Hero): Observable<any> {
     return this.http.put(this.heroesUrl, hero, httpOptions).pipe(
@@ -115,4 +88,42 @@ export class HeroService {
       catchError(this.handleError<Hero>('deleteHero'))
     );
   }
+
+  searchHeroes(term: string): Observable<Hero[]> {
+    if(!term.trim()){return of([]);} // don't forget of!
+
+    return this.http.get<Hero[]>(`${this.heroesUrl}/?name=${term}`).pipe(
+      tap(_ => this.log(`found heroes matching ${term}`)), // why the _ and not (term : string) like addHero? Cause Hero is not a native type? That's my guess.
+      catchError(this.handleError<Hero[]>('searchHeros', []))
+    );
+
+  }
+
+  /** Log a HeroService message with the MessageService */
+  private log(message: string): void {
+    this.messageService.add('HeroService: ' + message);
+  }
+
+  /**
+   * Handle Http operation that failed.
+   * Let the app continue.
+   * @param operation - name of the operation that failed, hmm.. looks like we can have default param values
+   * @param result - optional value to return as the observable result
+   */
+  private handleError<T> (operation = 'operation', result?: T) {
+    // Because each service method returns a different kind of Observable result, errorHandler() takes a type parameter
+    // so it can return the safe value as the type that the app expects.
+    return (error: any): Observable<T> => {
+
+      // TODO: send the error to remote logging infrastructure
+      console.error(error); // log to console instead
+
+      // TODO: better job of transforming error for user consumption
+      this.log(`${operation} failed: ${error.message}`);
+
+      // Let the app keep running by returning an empty result.
+      return of(result as T);
+    };
+  }
+
 }
