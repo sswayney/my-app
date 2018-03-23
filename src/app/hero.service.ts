@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';// Notice that the new service imports the Angular Injectable symbol and annotates the class with the @Injectable() decorator.
+import { HttpClient } from "@angular/common/http";
+
 import { Observable } from "rxjs/Observable";
 import { of } from "rxjs/observable/of";
+import { catchError, map, tap } from 'rxjs/operators';
 
-import {MessageService} from "./message.service";
+import { MessageService } from "./message.service";
 
-import {HEROES} from "./mock-heroes";
-import {Hero} from "./hero";
+import { Hero } from "./hero";
+
 
 
 
@@ -13,21 +16,64 @@ import {Hero} from "./hero";
 @Injectable()
 export class HeroService {
 
-  // This is a typical "service-in-service" scenario: you inject the MessageService into the HeroService which is injected into the HeroesComponent.
-  constructor(private messageService: MessageService) { }
+  private heroesUrl = 'api/heroes';
 
+  // This is a typical "service-in-service" scenario: you inject the MessageService into the HeroService which is injected into the HeroesComponent.
+  constructor(private http: HttpClient, private messageService: MessageService) { }
+
+  // get them heroes from our server
   getHeroes(): Observable<Hero[]> {
-    // Todo: send the message AFTER fetching the heroes
-    this.messageService.add('HeroService: fetched heroes');
-    // of(HEROES) returns an Observable<Hero[]> that emits a single value, the array of mock heroes.
-    return of(HEROES);
+    /**
+     * All HttpClient methods return an RxJS Observable of something.
+     HTTP is a request/response protocol. You make a request, it returns a single response.
+     In general, an Observable can return multiple values over time. An Observable from HttpClient always emits a single value and then completes, never to emit again.
+     This particular HttpClient.get call returns an Observable<Hero[]>, literally "an observable of hero arrays". In practice, it will only return a single hero array.
+     */
+    return this.http.get<Hero[]>(this.heroesUrl) // Applying the optional type specifier, <Hero[]> , gives you a typed result object.
+        .pipe(
+          tap(heroes => this.log(`fetched heroes`)), // tap operator, which looks at the observable values, does something with those values, and passes them along. The tap call back doesn't touch the values themselves.
+          catchError(this.handleError('getHeroes',[]))
+        );
+    /**
+     * Other APIs may bury the data that you want within an object. You might have to dig that data out by processing the Observable result with the RxJS map operator.
+     * For example, I think our API returns our lists wrapped in another object with paging info and the list its self is in a data property.
+     * Maybe we make our own type for such a thing? Like a ListResponse type.
+     */
   }
 
   getHero(id: number): Observable<Hero> {
-    // Todo: send the message AFTER fetching the hero
-    this.messageService.add(`HeroService: fetched hero id=${id}`);
-    // with hero as a hero in the heroes list, get a hero such that the hero id is id.
-    return of(HEROES.find(hero => hero.id === id));
+    const url = `${this.heroesUrl}/${id}`;
+    return this.http.get<Hero>(url).pipe(
+      tap(_ => this.log(`fetched hero id=${id}`)),
+      catchError(this.handleError<Hero>(`getHero id=${id}`))
+    );
+  }
+
+  /** Log a HeroService message with the MessageService */
+  private log(message: string): void {
+    this.messageService.add('HeroService: ' + message);
+  }
+
+  /**
+   * Handle Http operation that failed.
+   * Let the app continue.
+   * @param operation - name of the operation that failed, hmm.. looks like we can have default param values
+   * @param result - optional value to return as the observable result
+   */
+  private handleError<T> (operation = 'operation', result?: T) {
+    // Because each service method returns a different kind of Observable result, errorHandler() takes a type parameter
+    // so it can return the safe value as the type that the app expects.
+    return (error: any): Observable<T> => {
+
+      // TODO: send the error to remote logging infrastructure
+      console.error(error); // log to console instead
+
+      // TODO: better job of transforming error for user consumption
+      this.log(`${operation} failed: ${error.message}`);
+
+      // Let the app keep running by returning an empty result.
+      return of(result as T);
+    };
   }
 
 }
