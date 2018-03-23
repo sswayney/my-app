@@ -37,7 +37,14 @@ export class HeroesComponent implements OnInit {
     this.selectedHero = hero;
   }
 
+  // before observable
+  // getHeroes(): void {
+  //   this.heroes = this.heroService.getHeroes();
+  // }
+
   getHeroes(): void {
-    this.heroes = this.heroService.getHeroes();
+    // waits for the Observable to emit the array of heroes— which could happen now or several minutes from now.
+    // Then subscribe passes the emitted array to the callback, which sets the component's heroes property.
+    this.heroService.getHeroes().subscribe(heroes => this.heroes = heroes);
   }
 }
