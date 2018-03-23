@@ -16,7 +16,6 @@ export class HeroesComponent implements OnInit {
   //Always export the component class so you can import it elsewhere ... like in the AppModule.
 
   heroes: Hero[];
-  selectedHero: Hero;
 
   // Sweet Sweet Injection happens in the constructor
   // Add a private heroService parameter of type HeroService to the constructor.
@@ -33,9 +32,6 @@ export class HeroesComponent implements OnInit {
     this.getHeroes();
   }
 
-  onSelect(hero: Hero): void {
-    this.selectedHero = hero;
-  }
 
   // before observable
   // getHeroes(): void {

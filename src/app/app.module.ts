@@ -10,6 +10,7 @@ import { HeroService } from "./hero.service";
 import { MessagesComponent } from './messages/messages.component';
 import { MessageService } from './message.service';
 import { AppRoutingModule } from './/app-routing.module';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 // Angular needs to know how the pieces of your application fit together and what other files and libraries the app requires. This information is called metadata
 // Some of the metadata is in the @Component decorators that you added to your component classes. Other critical metadata is in @NgModule decorators.
@@ -19,7 +20,8 @@ import { AppRoutingModule } from './/app-routing.module';
     AppComponent,
     HeroesComponent,
     HeroDetailComponent,
-    MessagesComponent
+    MessagesComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,

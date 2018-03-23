@@ -8,11 +8,15 @@ import { RouterModule, Routes } from "@angular/router";
 
 // components that need routing
 import { HeroesComponent }      from './heroes/heroes.component';
+import { DashboardComponent } from "./dashboard/dashboard.component";
 import { HeroDetailComponent } from "./hero-detail/hero-detail.component";
 
 // our routes
 const routes: Routes = [
-  { path: 'heroes', component: HeroesComponent }
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full'},
+  { path: 'heroes', component: HeroesComponent },
+  { path: 'dashboard', component: DashboardComponent},
+  { path: 'detail/:id', component: HeroDetailComponent},
 ];
 
 
